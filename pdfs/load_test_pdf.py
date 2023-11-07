@@ -2,12 +2,12 @@
 import os
 from dotenv import load_dotenv
 # LLM
-import openai
+from langchain.llms import OpenAI
+from langchain.embeddings import OpenAIEmbeddings
 # Data Lake
 import deeplake
 # Langchain
 from langchain.schema import Document
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import DeepLake
 from langchain.document_loaders import PDFPlumberLoader
 from langchain.text_splitter import (
@@ -54,4 +54,4 @@ class PDFprocessing():
 
 if __name__ == "__main__":
     processor = PDFprocessing()
-    processor.pdf_pre_processing("./", "../Deeplake/snkl_helper/")   
+    processor.pdf_pre_processing("~/.", "./Deeplake/snkl_helper/")   
