@@ -486,7 +486,7 @@ with gr.Blocks(title="snkl assistant", css=css) as demo:
         load_demo,
         [url_params],
         [state, chatbot, textbox, submit_btn, button_row, parameter_row],
-        _js=get_window_url_params,
+        #_js=get_window_url_params,
     )
 
 
@@ -513,8 +513,7 @@ if __name__ == "__main__":
         io=io,
     )
 
-    demo.queue(
-        concurrency_count=args.concurrency_count, status_update_rate=10, api_open=False
+    demo.queue( status_update_rate=10, api_open=False
     )
     demo.launch(
         height=500,

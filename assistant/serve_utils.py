@@ -96,9 +96,9 @@ def add_text(state, text, request: gr.Request):
 
 headers = {"User-Agent": "snkl assistant"}
 
-no_change_btn = gr.Button.update()
-enable_btn = gr.Button.update(interactive=True)
-disable_btn = gr.Button.update(interactive=False)
+no_change_btn = gr.Button()
+enable_btn = gr.Button(interactive=True)
+disable_btn = gr.Button(interactive=False)
 
 get_window_url_params = """
 function() {

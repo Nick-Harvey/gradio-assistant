@@ -1,0 +1,49 @@
+# Project Name
+
+Moonlighting project to create a custom chatbot
+
+## Table of Contents
+- [General Tech-Stack](#general-tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## General Tech-Stack
+
+Our project is built with the following technologies:
+
+- **Langchain**: Integrating Large Language Models (LLM) such as ChatGPT for sophisticated natural language processing tasks.
+- **Graido**: (Describe what Graido is used for in the context of this project).
+- **Deeplake**: Utilizing VectorDB for efficient and scalable data storage and retrieval.
+
+## Installation
+
+To set up the project for development or deployment, follow these steps:
+
+1. Clone the repository and navigate into it:
+   ```sh
+   git clone [repository-url]
+   cd [local-repository]
+   ```
+2. Install the required dependencies:
+  ```sh
+  pip install -r requirements.txt
+  ```
+3. Add your OpenAI API key to your .env file to allow API access.
+4. Populate the vector store with data:
+  - Add any a PDF of your choice pdfs directory.
+  - Run the script to load the PDF into the vector store:
+  ```sh
+  python load_test_pdf.py
+  ```
+5. Start the application:
+  - With Gradio launcher:
+  ```sh
+  gradio main.py
+  ```
+  Without Gradio UI:
+  ```sh
+  python main.py
+  ```
