@@ -52,6 +52,8 @@ from langchain.agents.agent_toolkits import create_retriever_tool
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from langchain.schema.output_parser import StrOutputParser
 
+from pydantic import BaseModel
+
 
 server_error_msg = (
     "**NETWORK ERROR DUE TO HIGH TRAFFIC. PLEASE REGENERATE OR REFRESH THIS PAGE.**"
@@ -178,7 +180,27 @@ class ChatAgent:
             ),
         ]
 
+
+        # retriever_infos = [
+        #     {
+        #         "name": "analyst reports",
+        #         "description": "useful for all questions related to industry analysts (Gartner, IDC, etc.) reports from companies like Gartner",
+        #         "retriever": analyst_retriever
+        #     },
+        #     {
+        #         "name": "current search",
+        #         "description": "useful for all question that asks about current events",
+        #         "retriever": search
+        #     },
+        #     {
+        #         "name": "Snorkel info",
+        #         "description": "useful for when you need to look up specific information about Snorkel AI",
+        #         "retriever": snorkel_retriever
+
+        #     }
+        # ]
         # Create our agent
+        # agent = MultiRetrievalQAChain.from_retrievers(chat, retriever_infos, verbose=True)
         agent = create_conversational_retrieval_agent(chat, tools, verbose=True)
 
         # # define tools for our retriever
@@ -199,7 +221,8 @@ class ChatAgent:
         #     response = agent(data["text_input"])
 
         try:
-            response = agent(data["text_input"])
+            response = agent.run(data["text_input"])
+            import pdb; pdb.set_trace()
 
             yield (response["output"], True)
 

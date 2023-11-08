@@ -7,7 +7,6 @@ import gradio as gr
 import argparse
 import datetime
 import time
-import torch
 from assistant.library import Library
 from assistant.gradio_css import code_highlight_css
 from assistant.conversation import default_conversation
@@ -100,9 +99,7 @@ def http_bot(
     yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
 
     try:
-        import pdb
-
-        pdb.set_trace()
+        import pdb; pdb.set_trace()
         for chunk in agent.predict(data):
             if chunk:
                 if chunk[1]:
@@ -502,14 +499,8 @@ if __name__ == "__main__":
     parser.add_argument("--concurrency-count", type=int, default=100)
     args = parser.parse_args()
 
-    if torch.cuda.is_available():
-        device = "cuda"
-    else:
-        device = "cpu"
-
     agent = ChatAgent(
         log_dir=log_dir,
-        device=device,
         io=io,
     )
 
