@@ -75,6 +75,27 @@ class ChatAgent:
         )
         self.io = io
 
+        # Initialize ChatOpenAI instance
+        self.chat = ChatOpenAI(streaming=True, temperature=0)
+
+        # Initialize Analyst Retriever
+        analyst_vs_path = "./Deeplake/snkl_helper/research_data/"
+        analyst_vs = DeepLake(dataset_path=analyst_vs_path, embedding=self.embeddings)
+        self.analyst_retriever = RetrievalQA.from_chain_type(
+            llm=self.chat,
+            chain_type="stuff",
+            retriever=analyst_vs.as_retriever(),
+        )
+
+        # Initialize Snorkel Retriever
+        snorkel_vs_path = "./Deeplake/snkl_helper/snorkel_data/"
+        snorkel_vs = DeepLake(dataset_path=snorkel_vs_path, embedding=self.embeddings)
+        self.snorkel_retriever = RetrievalQA.from_chain_type(
+            llm=self.chat,
+            chain_type="stuff",
+            retriever=snorkel_vs.as_retriever(),
+        )
+
     def evaluate(
         self,
         input_ids=None,
@@ -144,85 +165,28 @@ class ChatAgent:
 
         search = GoogleSearchAPIWrapper()
 
-        # Analyst retriever
-        analyst_vs_path = "./Deeplake/snkl_helper/research_data/"
-        analyst_vs = DeepLake(dataset_path=analyst_vs_path, embedding=self.embeddings)
-        analyst_retriever = RetrievalQA.from_chain_type(
-            llm=chat,
-            chain_type="stuff",
-            retriever=analyst_vs.as_retriever(),
-        )
-
-        # Snorkel retriever
-        snorkel_vs_path = "./Deeplake/snkl_helper/snorkel_data/"
-        snorkel_vs = DeepLake(dataset_path=snorkel_vs_path, embedding=self.embeddings)
-        snorkel_retriever = RetrievalQA.from_chain_type(
-            llm=chat,
-            chain_type="stuff",
-            retriever=snorkel_vs.as_retriever(),
-        )
-
         tools = [
             Tool(
                 name="analyst_reports",
-                func=analyst_retriever.run,
+                func=self.analyst_retriever.run,
                 description="useful for all questions related to industry analysts (Gartner, IDC, etc.) reports from companies like Gartner",
             ),
             Tool(
                 name="Snorkel_knowledge",
-                func=snorkel_retriever.run,
+                func=self.snorkel_retriever.run,
                 description="useful for all questions related to Snorkel",
             ),
             Tool(
                 name="current_search",
                 func=search.run,
-                description="useful for all question that asks about current events",
+                description="useful for questions that require up to date information",
             ),
         ]
 
-
-        # retriever_infos = [
-        #     {
-        #         "name": "analyst reports",
-        #         "description": "useful for all questions related to industry analysts (Gartner, IDC, etc.) reports from companies like Gartner",
-        #         "retriever": analyst_retriever
-        #     },
-        #     {
-        #         "name": "current search",
-        #         "description": "useful for all question that asks about current events",
-        #         "retriever": search
-        #     },
-        #     {
-        #         "name": "Snorkel info",
-        #         "description": "useful for when you need to look up specific information about Snorkel AI",
-        #         "retriever": snorkel_retriever
-
-        #     }
-        # ]
-        # Create our agent
-        # agent = MultiRetrievalQAChain.from_retrievers(chat, retriever_infos, verbose=True)
-        agent = create_conversational_retrieval_agent(chat, tools, verbose=True)
-
-        # # define tools for our retriever
-        # analyst_tool = create_retriever_tool(
-        #     analyst_qa,
-        #     "consult_analyst_reports",
-        #     "searches and returns documents regarding analysts perspectives, research, and opinions on AI",
-        # )
-        # snorkel_tool = create_retriever_tool(
-        #     snorkel_qa,
-        #     "consult_snorkel_information",
-        #     "searches and returns documents regarding analysts perspectives, research, and opinions on AI",
-        # )
-
-        # tools = [analyst_retriever, snorkel_tool]
-
-        # try:
-        #     response = agent(data["text_input"])
+        agent = create_conversational_retrieval_agent(self.chat, tools, verbose=True)
 
         try:
-            response = agent.run(data["text_input"])
-            import pdb; pdb.set_trace()
+            response = agent({"input": data["text_input"]})
 
             yield (response["output"], True)
 

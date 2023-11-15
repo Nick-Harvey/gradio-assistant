@@ -182,46 +182,11 @@ def add_text_http_bot(
     }
 
     state.messages[-1][-1] = "▌"
+    import pdb; pdb.set_trace()
     yield (state, state.to_gradio_chatbot(), "", None, None) + (disable_btn,) * 5
 
-    # try:
-
-    #     agent_ret = agent.predict(data)
-
-    #     logging.info("Formatting agent response.")
-
-    #     for chunk in agent_ret:
-    #         output = chunk[0].strip()
-    #         state.messages[-1][-1] = output + "▌"
-
-    #         yield (state, state.to_gradio_chatbot(), "", None, None) + (disable_btn,) * 5
-    #         return
 
     try:
-        # # import pdb; pdb.set_trace()
-        # for chunk in agent.predict(data):
-        #     if chunk:
-        #         output = chunk[0].strip()
-        #         output = post_process_code(output)
-        #         print(output)
-        #         state.messages[-1][-1] = output + "▌"
-        #         print(output + "▌")
-        #         yield (state, state.to_gradio_chatbot(), "", None, None) + (
-        #             disable_btn,
-        #         ) * 5
-        #     else:
-        #         output = chunk[0].strip()
-        #         state.messages[-1][-1] = output
-        #         yield (state, state.to_gradio_chatbot(), "", None, None) + (
-        #             disable_btn,
-        #             disable_btn,
-        #             disable_btn,
-        #             enable_btn,
-        #             enable_btn,
-        #         )
-        #         return
-        #     time.sleep(0.03)
-        # import pdb; pdb.set_trace()
         agent_return = agent.predict(data)
 
         for ret in agent_return:
